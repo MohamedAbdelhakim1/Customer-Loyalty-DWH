@@ -1,0 +1,12 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="LocalHost.Task_DWH"
+  DTS:DTSID="{48487297-2464-4E73-B4FE-515D110E8E20}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectRetryCount="1"
+      DTS:ConnectRetryInterval="5"
+      DTS:ConnectionString="Data Source=.;Initial Catalog=Task_DWH;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-kero Task-{48487297-2464-4E73-B4FE-515D110E8E20}LocalHost.Task_DWH;Auto Translate=False;" />
+  </DTS:ObjectData>
+</DTS:ConnectionManager>
