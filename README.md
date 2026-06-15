@@ -17,9 +17,9 @@ The project follows a **3-Layer Architecture**:
 ```
 Source Data
     ↓
-[STG] Staging Layer       → Raw data loaded from source systems
+[ODS] Operational Data Store → Raw data loaded from source systems
     ↓
-[ODS] Operational Data Store → Cleaned & standardized data
+[STG] Staging Layer          → Cleaned & standardized data
     ↓
 [DWH] Data Warehouse         → Star Schema for analytics
 ```
@@ -89,11 +89,11 @@ Customer-Loyalty-DWH/
 
 ## 🖼️ Database Schemas
 
-### Staging Layer (STG)
-![STG Schema](STG.png)
-
 ### Operational Data Store (ODS)
 ![ODS Schema](ODS.png)
+
+### Staging Layer (STG)
+![STG Schema](STG.png)
 
 ### Data Warehouse (DWH)
 ![DWH Schema](DWH.png)
