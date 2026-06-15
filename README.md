@@ -6,13 +6,11 @@
 
 ## 📌 Project Overview
 
-This project implements a full **ETL pipeline** and **dimensional data model** to analyze customer flight activity, loyalty points, and enrollment behavior. The solution covers everything from raw data ingestion to interactive Power BI dashboards.
+This project implements a full **ETL pipeline** and **dimensional data model** to analyze customer flight activity, loyalty points, and enrollment behavior. The solution covers everything from raw data ingestion to interactive Power BI dashboards with 3 report pages.
 
 ---
 
 ## 🏗️ Architecture
-
-The project follows a **3-Layer Architecture**:
 
 ```
 Source Data (CSV Files)
@@ -22,6 +20,8 @@ Source Data (CSV Files)
 [STG] Staging Layer           →  Cleaned & standardized data
         ↓
 [DWH] Data Warehouse          →  Star Schema ready for analytics
+        ↓
+[Power BI] Dashboard          →  Interactive reports & KPIs
 ```
 
 ---
@@ -45,13 +45,24 @@ Customer Loyalty History
 Dimensions are loaded in order to respect foreign key dependencies:
 
 ```
-Dim_Date → Dim_Customer → Dim_Enrollment → Dim_Gender
-       → Dim_Geography → Dim_LoyaltyCard → Fact_Table
+Dim_Date
+   ↓
+Dim_Customer
+   ↓
+Dim_Enrollment
+   ↓
+Dim_Gender
+   ↓
+Dim_Geography
+   ↓
+Dim_LoyaltyCard
+   ↓
+Fact_Table
 ```
 
 ---
 
-## 🗂️ Data Model
+## 🗂️ Data Model — Star Schema
 
 ### ⭐ Fact Table
 | Column | Type | Description |
@@ -66,14 +77,14 @@ Dim_Date → Dim_Customer → Dim_Enrollment → Dim_Gender
 | Dollar_Cost_Points_Redeemed | int | Dollar value of redeemed points |
 
 ### 📐 Dimension Tables
-| Table | Description |
-|-------|-------------|
-| Dim_Customer | Demographics: Education, Salary, Marital Status, CLV |
-| Dim_Date | Year, Month, Quarter, MonthName |
-| Dim_Geography | Country, Province, City, PostalCode |
-| Dim_LoyaltyCard | Card types: Aurora, Nova, Star |
-| Dim_Enrollment | Enrollment types: Standard, 2018 Promotion |
-| Dim_Gender | Male / Female lookup |
+| Table | Key Columns | Description |
+|-------|------------|-------------|
+| Dim_Customer | Id_Cus | Education, Salary, Marital Status, CLV |
+| Dim_Date | DateKey | Year, Month, Quarter, MonthName |
+| Dim_Geography | GeoID | Country, Province, City, PostalCode |
+| Dim_LoyaltyCard | LoyaltyCardID | Card types: Aurora, Nova, Star |
+| Dim_Enrollment | EnrollID | Standard, 2018 Promotion |
+| Dim_Gender | ID_Gender | Male / Female |
 
 ---
 
@@ -81,7 +92,7 @@ Dim_Date → Dim_Customer → Dim_Enrollment → Dim_Gender
 
 | Tool | Purpose |
 |------|---------|
-| SQL Server | Database engine for all 3 layers |
+| SQL Server | Database engine for ODS, STG & DWH |
 | SSIS | ETL Pipeline (Extract, Transform, Load) |
 | Power BI | Interactive dashboards & visualizations |
 | T-SQL | Data transformations & stored procedures |
@@ -89,61 +100,49 @@ Dim_Date → Dim_Customer → Dim_Enrollment → Dim_Gender
 
 ---
 
-## 📊 Power BI Dashboards
+## 📊 Power BI Dashboard
 
-The report has **3 pages**:
+The report contains **3 interactive pages** with slicers for Year, Month, Province, and Card Type.
 
 ### 1️⃣ Overview Page
-![Overview Dashboard](Screenshots/overview.png)
+![Overview](Airline-Loyalty-Analytics%20main/Screenshot%202026-06-15%20121300.png)
 
-**KPIs:**
-- 17K Total Customers
-- $133.71M Total CLV
-- 762M Total Distance (km)
-- 12.35% Cancellation Rate
+| KPI | Value |
+|-----|-------|
+| Total Customers | 17K |
+| Total CLV | $133.71M |
+| Total Distance | 762M km |
+| Cancellation Rate | 12.35% |
 
-**Visuals:**
-- Avg CLV by Enrollment Type (2018 Promotion vs Standard)
-- Avg Distance per Flight by Card Tier (Aurora, Nova, Star)
-- Total Points Redeemed by Card Type
-- Customer distribution by Marital Status
-- Total Revenue by Month
+**Visuals:** Avg CLV by Enrollment Type · Avg Distance per Flight by Card Tier · Total Points Redeemed by Card Type · Customers by Marital Status · Total Revenue by Month
 
 ---
 
 ### 2️⃣ Customers Page
-![Customers Dashboard](Screenshots/customers.png)
+![Customers](Airline-Loyalty-Analytics%20main/Screenshot%202026-06-15%20121348.png)
 
-**KPIs:**
-- $59K Avg Salary
-- 15K Active Customers
-- 17K Total Customers
-- $7.99K Avg CLV
+| KPI | Value |
+|-----|-------|
+| Avg Salary | $59K |
+| Active Customers | 15K |
+| Total Customers | 17K |
+| Avg CLV | $7.99K |
 
-**Visuals:**
-- Total Customers by Province (Map)
-- Gender distribution (Male 49.75% / Female 50.25%)
-- Marital Status breakdown
-- Avg Salary by Card Type
-- Total Customers by Education level
+**Visuals:** Customers by Province (Map) · Gender Distribution · Marital Status · Avg Salary by Card Type · Customers by Education
 
 ---
 
 ### 3️⃣ Flight Activity Page
-![Flight Activity Dashboard](Screenshots/flight_activity.png)
+![Flight Activity](Airline-Loyalty-Analytics%20main/Screenshot%202026-06-15%20121435.png)
 
-**KPIs:**
-- 235K Total Flights
-- 14.02 Avg Flights per Customer
-- 762M Total Distance (km)
-- 13.80K Avg Flights per Year
+| KPI | Value |
+|-----|-------|
+| Total Flights | 235K |
+| Avg Flights per Customer | 14.02 |
+| Total Distance | 762M km |
+| Avg Flights per Year | 13.80K |
 
-**Visuals:**
-- Customer count by Card Type (Star 45.39%, Nova 34.02%, Aurora 20.59%)
-- Avg Distance per Flight by Tier
-- Avg Flights by Province
-- Avg Flights per Month trend
-- Total Distance over time
+**Visuals:** Customers by Card Type · Avg Distance by Tier · Avg Flights by Province · Monthly Flight Trends · Total Distance over Time
 
 ---
 
@@ -152,25 +151,23 @@ The report has **3 pages**:
 ```
 Customer-Loyalty-DWH/
 │
-├── kero Task/               # SSIS project - DWH ETL packages
-│   ├── Dim_Date
-│   ├── Dim_Customer
-│   ├── Dim_Enrollment
-│   ├── Dim_Gender
-│   ├── Dim_Geography
-│   ├── Dim_LoyaltyCard
-│   └── Fact_Table
+├── Airline-Loyalty-Analytics/        # SSIS - DWH ETL packages
+│   ├── DWH.dtsx                      # DWH package
+│   ├── ODS.dtsx                      # ODS package
+│   ├── STG.dtsx                      # STG package
+│   └── Project.params
 │
-├── Task kero/               # SSIS project - ODS ETL packages
-│   ├── Calendar
-│   ├── Customer Flight Activity
-│   └── Customer Loyalty History
+├── Airline-Loyalty-Analytics main/   # Source data & Screenshots
+│   ├── Customer Loyalty History.csv  # Source data
+│   ├── Customer Flight Activity.csv  # Source data
+│   ├── Calendar.csv                  # Source data
+│   └── Screenshot *.png              # Dashboard screenshots
 │
-├── Task.pbix                # Power BI dashboard (3 pages)
-├── ODS.png                  # ODS layer schema
-├── STG.png                  # Staging layer schema
-├── DWH.png                  # Data Warehouse schema
-└── kero Task.sln            # Visual Studio solution file
+├── Task.pbix                         # Power BI dashboard
+├── ODS.png                           # ODS schema diagram
+├── STG.png                           # STG schema diagram
+├── DWH.png                           # DWH schema diagram
+└── kero Task.sln                     # Visual Studio solution
 ```
 
 ---
